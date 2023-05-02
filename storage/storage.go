@@ -9,10 +9,6 @@ import (
 
 var DB *sql.DB
 
-type PGStore struct {
-	DB *sql.DB
-}
-
 func NewPostgresStore() error {
 	var err error
 	dbconfig, err := LoadEnv()

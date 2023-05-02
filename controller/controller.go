@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"net/http"
+	"redCards/helpers"
 	"redCards/models"
 	"redCards/storage"
 	"strconv"
@@ -13,41 +14,19 @@ import (
 
 var lock = sync.Mutex{}
 
-// create perk
-func CreatePerk(e echo.Context) error {
+// create card
+func CreateCard(e echo.Context) error {
 	lock.Lock()
 	defer lock.Unlock()
 
-	perk := new(models.Card)
-	if err := e.Bind(&perk); err != nil {
+	card := new(models.Card)
+	if err := e.Bind(&card); err != nil {
 		return err
 	}
 
-	perk.JokeType = "perk"
-
-	res, err := storage.DB.Query("INSERT INTO cards (joke_type, joke, topic)VALUES ($1,$2,$3)", perk.JokeType, perk.Joke, perk.Topic)
+	res, err := storage.DB.Query("INSERT INTO cards (joke_type, joke, topic)VALUES ($1,$2,$3)", card.JokeType, card.Joke, card.Topic)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{"error: ": err.Error()})
-	}
-
-	return e.JSON(http.StatusCreated, res)
-}
-
-// create new deal breaker
-func CreateDealbreaker(e echo.Context) error {
-	lock.Lock()
-	defer lock.Unlock()
-
-	dealbreaker := new(models.Card)
-	if err := e.Bind(&dealbreaker); err != nil {
-		return err
-	}
-
-	dealbreaker.JokeType = "dealbreaker"
-
-	res, err := storage.DB.Query("INSERT INTO cards (joke_type, joke, topic)VALUES ($1,$2,$3)", dealbreaker.JokeType, dealbreaker.Joke, dealbreaker.Topic)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	return e.JSON(http.StatusCreated, res)
@@ -80,30 +59,31 @@ func GetJokes(e echo.Context) error {
 
 	rows, err := storage.DB.Query(query, args...)
 	if err != nil {
-		return err
+		return e.JSON(http.StatusInternalServerError, helpers.ErrToJSON(err))
 	}
 
 	result, err := scanIntoCard(rows)
 	if err != nil {
-		return err
+		return e.JSON(http.StatusInternalServerError, helpers.ErrToJSON(err))
 	}
 
 	return e.JSON(http.StatusOK, result)
 }
 
 // delete
+// TODO: Check if ID exsists
 func DeleteJoke(e echo.Context) error {
 	lock.Lock()
 	defer lock.Unlock()
 
 	id, err := strconv.Atoi(e.Param("id"))
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return e.JSON(http.StatusInternalServerError, helpers.ErrToJSON(err))
 	}
 
 	_, err = storage.DB.Query("DELETE FROM cards WHERE id = $1", id)
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return e.JSON(http.StatusInternalServerError, helpers.ErrToJSON(err))
 	}
 
 	return e.JSON(http.StatusOK, map[string]int{"deleted card with id: ": id})

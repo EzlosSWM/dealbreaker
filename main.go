@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"redCards/router"
+	"redCards/routes"
 	"redCards/storage"
 )
 
@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	app := router.StartApp()
+	app := routes.StartApp()
 
 	// app.Logger.Fatal(app.Start(":3000"))
 	go func() {
