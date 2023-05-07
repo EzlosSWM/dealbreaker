@@ -1,5 +1,16 @@
-build:
-	@go build -o bin/redCards
+APP_NAME=dealbreakerapi
+BUILD_DIR=./bin
+ENTRYPOINT=./cmd/main.go
 
-run: build
-	@./bin/redCards
+.PHONY: all clean build run
+
+all: clean build run
+
+clean: 
+	@rm -rf $(BUILD_DIR)
+	
+build:
+	@go build -o $(BUILD_DIR)/$(APP_NAME) $(ENTRYPOINT)
+
+run: 
+	@$(BUILD_DIR)/$(APP_NAME)	
