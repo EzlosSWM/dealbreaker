@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-*.env
+.env
 
 # Test binary, built with `go test -c`
 *.test
@@ -24,3 +24,6 @@ go.work
 # Created binaries
 bin/
 views/    
+
+# Start scripts
+start.sh
