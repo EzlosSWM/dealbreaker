@@ -1,4 +1,4 @@
-package main
+package http
 
 import (
 	"context"
@@ -7,22 +7,29 @@ import (
 	"os/signal"
 	"time"
 
-	"redCards/routes"
-	"redCards/storage"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func main() {
+func Start() *echo.Echo {
 
-	if err := storage.NewPostgresStore(); nil != err {
-		panic(err)
-	}
+	// secret := os.Getenv("JWT")
 
-	if err := storage.InitTable(); nil != err {
-		panic(err)
-	}
+	e := echo.New()
 
-	app := routes.StartApp()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
+	Routes(e)
+
+	return e
+}
+
+func Shutdown(app *echo.Echo) error {
 	// app.Logger.Fatal(app.Start(":3000"))
 	go func() {
 		if err := app.Start(":3000"); err != nil && err != http.ErrServerClosed {
@@ -39,4 +46,5 @@ func main() {
 	if err := app.Shutdown(ctx); err != nil {
 		app.Logger.Fatal(err)
 	}
+	return nil
 }

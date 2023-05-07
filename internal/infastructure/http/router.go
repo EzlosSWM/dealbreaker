@@ -1,29 +1,21 @@
-package routes
+package http
 
 import (
 	"net/http"
 	"os"
-	"redCards/controller"
+	"redCards/internal/infastructure/http/handlers"
 
 	"github.com/golang-jwt/jwt/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type jwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func StartApp() *echo.Echo {
+func Routes(e *echo.Echo) {
 	secret := os.Getenv("JWT")
-
-	e := echo.New()
-
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
-	}))
 
 	e.GET("/healthcheck", func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK!")
@@ -31,7 +23,7 @@ func StartApp() *echo.Echo {
 
 	// grouping
 	group := e.Group("/api/v1")
-	group.GET("/jokes", controller.GetJokes)
+	group.GET("/jokes", handlers.GetJokes)
 
 	// restricted routes
 	r := group.Group("/card")
@@ -45,8 +37,7 @@ func StartApp() *echo.Echo {
 	}
 	r.Use(echojwt.WithConfig(config))
 
-	r.POST("", controller.CreateCard)
-	r.DELETE("/:id", controller.DeleteJoke)
-
-	return e
+	r.POST("", handlers.CreateCard)
+	// r.POST("test", handlers.TestCards)
+	r.DELETE("/:id", handlers.DeleteJoke)
 }
