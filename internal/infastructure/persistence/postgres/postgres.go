@@ -34,8 +34,7 @@ func InitTable() error {
 	query := `CREATE TABLE IF NOT EXISTS cards (
 		id serial primary key,
 		joke_type text not null,
-		joke text not null,
-		topic text not null
+		joke text not null
 	)
 	`
 	_, err := DB.Exec(query)

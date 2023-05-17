@@ -27,9 +27,6 @@ $ cp example.env .env
 *"/api/v1/jokes"*
 - Returns all jokes
 
-*"/api/v1/jokes/topic/:topic"*
-- Filters the jokes returned by the topic 
-
 *"/api/v1/jokes/type/:joke_type"* 
 - Filters the jokes returned by the type of joke 
 
@@ -45,22 +42,17 @@ $ cp example.env .env
 ```JSON
 {
     "joke_type": "dealbreaker",
-    "joke": "King/Queen of halitosis.",
-    "topic": "general"
+    "joke": "King/Queen of halitosis."
 }
 ```
 
-#### Joke Topic
-- general 
-- sexual 
-- finance 
-- domestic
+*"api/v1/batch"*
+- Used to batch upload data into the database 
 
 #### Joke Types 
 - perk 
 - dealbreaker
 
 ### Todo 
-- [ ] pagination
-- [ ] custom error handling 
 - [ ] Dockerize
+- [ ] Deploy

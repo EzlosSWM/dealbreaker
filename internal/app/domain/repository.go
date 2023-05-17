@@ -2,6 +2,7 @@ package domain
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"redCards/internal/app/service"
 	"redCards/internal/infastructure/models"
@@ -10,35 +11,29 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Get(e echo.Context) (*models.Cards, error) {
-	var query string
-	var args []interface{}
+func Get(jokeType string) (*models.Cards, error) {
+	query := "SELECT * FROM cards"
 
-	if jokeType := e.QueryParam("joke_type"); jokeType != "" {
-		query = "SELECT * FROM cards WHERE joke_type = $1"
-		args = append(args, jokeType)
+	// jokeType := e.QueryParam("joke_type")
+	if jokeType != "" {
+		query += " WHERE joke_type = $1"
+	}
+
+	var rows *sql.Rows
+	var err error
+	if jokeType != "" {
+		rows, err = postgres.DB.Query(query, jokeType)
 	} else {
-		query = "SELECT * FROM cards"
+		rows, err = postgres.DB.Query(query)
 	}
-
-	if topic := e.QueryParam("topic"); topic != "" {
-		if len(args) == 0 {
-			query = "SELECT * FROM cards WHERE topic = $1"
-		} else {
-			query += " AND topic = $2"
-		}
-
-		args = append(args, topic)
-	}
-
-	rows, err := postgres.DB.Query(query, args...)
 	if err != nil {
-		return nil, e.JSON(http.StatusInternalServerError, service.ErrToJSON(err))
+		return nil, err
 	}
+	log.Printf("%v", query)
 
 	result, err := scanIntoCard(rows)
 	if err != nil {
-		return nil, e.JSON(http.StatusInternalServerError, service.ErrToJSON(err))
+		return nil, err
 	}
 
 	return result, nil
@@ -50,7 +45,7 @@ func Create(e echo.Context) (*sql.Rows, error) {
 		return nil, err
 	}
 
-	result, err := postgres.DB.Query("INSERT INTO cards (joke_type, joke, topic)VALUES ($1,$2,$3)", card.JokeType, card.Joke, card.Topic)
+	result, err := postgres.DB.Query("INSERT INTO cards (joke_type, joke) VALUES ($1,$2)", card.JokeType, card.Joke)
 	if err != nil {
 		return nil, e.JSON(http.StatusBadRequest, service.ErrToJSON(err))
 	}
@@ -58,13 +53,27 @@ func Create(e echo.Context) (*sql.Rows, error) {
 	return result, nil
 }
 
-func Delete(e echo.Context, id int) error {
-	_, err := postgres.DB.Query("DELETE FROM cards WHERE id = $1", id)
+func BatchPost(e echo.Context) error {
+
+	return nil
+}
+
+func Delete(id int) error {
+	res, err := postgres.DB.Exec("DELETE FROM cards WHERE id = $1", id)
 	if err != nil {
-		return e.JSON(http.StatusInternalServerError, service.ErrToJSON(err))
+		return err
 	}
 
-	return err
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return nil
+	}
+
+	return nil
 }
 
 // scan functionality for getting cards from db
@@ -73,7 +82,7 @@ func scanIntoCard(rows *sql.Rows) (*models.Cards, error) {
 
 	for rows.Next() {
 		card := new(models.Card)
-		if err := rows.Scan(&card.ID, &card.JokeType, &card.Joke, &card.Topic); err != nil {
+		if err := rows.Scan(&card.ID, &card.JokeType, &card.Joke); err != nil {
 			return nil, err
 		}
 

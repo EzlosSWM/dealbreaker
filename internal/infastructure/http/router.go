@@ -38,6 +38,6 @@ func Routes(e *echo.Echo) {
 	r.Use(echojwt.WithConfig(config))
 
 	r.POST("", handlers.CreateCard)
-	// r.POST("test", handlers.TestCards)
+	r.POST("/batch", handlers.BatchUpload)
 	r.DELETE("/:id", handlers.DeleteJoke)
 }
