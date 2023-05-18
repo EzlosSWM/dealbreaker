@@ -30,9 +30,15 @@ func Start() *echo.Echo {
 }
 
 func Shutdown(app *echo.Echo) error {
-	// app.Logger.Fatal(app.Start(":3000"))
+
 	go func() {
-		if err := app.Start(":3000"); err != nil && err != http.ErrServerClosed {
+		var port string
+
+		if port = os.Getenv("PORT"); port != "" {
+			port = "3000"
+		}
+
+		if err := app.Start(":" + port); err != nil && err != http.ErrServerClosed {
 			app.Logger.Fatal("shutting down the server")
 		}
 	}()

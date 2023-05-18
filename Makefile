@@ -1,6 +1,6 @@
 APP_NAME=dealbreakerapi
 BUILD_DIR=./bin
-ENTRYPOINT=./cmd/main.go
+ENTRYPOINT=./cmd/api/main.go
 
 .PHONY: all clean build run
 
