@@ -1,9 +1,9 @@
-package http
+package routes
 
 import (
 	"net/http"
 	"os"
-	"redCards/internal/infastructure/http/handlers"
+	"redCards/api/handlers"
 
 	"github.com/golang-jwt/jwt/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"

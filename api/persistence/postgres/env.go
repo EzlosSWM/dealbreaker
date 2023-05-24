@@ -2,8 +2,6 @@ package postgres
 
 import (
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type DBConfig struct {
@@ -14,10 +12,6 @@ type DBConfig struct {
 }
 
 func LoadEnv() (*DBConfig, error) {
-	if err := godotenv.Load(".env"); err != nil {
-		return nil, err
-	}
-
 	return &DBConfig{
 		Host:     os.Getenv("HOSTADDR"),
 		User:     os.Getenv("USER_NAME"),

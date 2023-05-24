@@ -1,4 +1,4 @@
-package models
+package entities
 
 type Cards struct {
 	Cards []Card
