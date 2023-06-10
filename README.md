@@ -11,9 +11,9 @@ To play the game, each player will be dealt a 3 card hand; two *perk* cards and 
 
 3. Download dependancies go mod download && go mod verify
 
-4. Copy the example.env to .env
+4. Copy the .env.example to .env
 ```bash 
-$ cp example.env .env
+$ cp .env.example .env
 ```
 
 5. Run 
@@ -52,7 +52,3 @@ $ cp example.env .env
 #### Joke Types 
 - perk 
 - dealbreaker
-
-### Todo 
-- [ ] Dockerize
-- [ ] Deploy

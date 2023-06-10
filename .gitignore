@@ -25,5 +25,12 @@ go.work
 bin/
 views/    
 
+# Docker 
+Dockerfile
+docker-file.yml
+
+# Misc
+*.json
+
 # Start scripts
-start.sh
+script.sh

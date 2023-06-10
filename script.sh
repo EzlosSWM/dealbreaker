@@ -1,7 +1,7 @@
 #!/bin/bash
 
 opt=$1
-container="" # Replace with your own postgres container
+container="214cfb1eda3f" # Replace with your own postgres container
 
 
 if [ "$opt" == "start" ]

@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -13,6 +14,7 @@ func NewPostgresStore() error {
 	var err error
 	dbconfig, err := LoadEnv()
 	if err != nil {
+		log.Panic("v ...any")
 		return err
 	}
 

@@ -6,7 +6,7 @@ import (
 	"redCards/api/routes"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request) {
+func main() {
 
 	if err := postgres.NewPostgresStore(); nil != err {
 		panic(err)
@@ -22,5 +22,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// 	panic(err)
 	// }
 
-	app.ServeHTTP(w, r)
+	var port string
+	port = "3000"
+
+	if err := app.Start(":" + port); err != nil && err != http.ErrServerClosed {
+		app.Logger.Fatal("shutting down the server")
+	}
 }
