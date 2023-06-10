@@ -27,7 +27,7 @@ views/
 
 # Docker 
 Dockerfile
-docker-file.yml
+docker-compose.yml
 
 # Misc
 *.json
